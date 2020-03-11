@@ -4,13 +4,13 @@ import beans.Attachment;
 
 import java.io.FileNotFoundException;
 
-public class AttachmentReader extends AbstractContentFileReader {
+public class AttachmentCsvFileReader extends AbstractContentScvFileReader {
     private static final String PATTERN = "";
-    public AttachmentReader(String filename, String delimiter) throws FileNotFoundException {
+    public AttachmentCsvFileReader(String filename, String delimiter) throws FileNotFoundException {
         super(filename, delimiter, PATTERN);
     }
 
-    public AttachmentReader(String filename) throws FileNotFoundException {
+    public AttachmentCsvFileReader(String filename) throws FileNotFoundException {
         super(filename, PATTERN);
     }
 

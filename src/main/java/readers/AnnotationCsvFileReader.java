@@ -4,14 +4,14 @@ import beans.Annotation;
 
 import java.io.FileNotFoundException;
 
-public class AnnotationReader extends AbstractContentFileReader {
+public class AnnotationCsvFileReader extends AbstractContentScvFileReader {
     private static final String PATTERN = "\\d*,\\d*,\".*\",";
 
-    public AnnotationReader(String filename, String delimiter) throws FileNotFoundException {
+    public AnnotationCsvFileReader(String filename, String delimiter) throws FileNotFoundException {
         super(filename, delimiter, PATTERN);
     }
 
-    public AnnotationReader(String filename) throws FileNotFoundException {
+    public AnnotationCsvFileReader(String filename) throws FileNotFoundException {
         super(filename, PATTERN);
     }
 

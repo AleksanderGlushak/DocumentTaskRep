@@ -4,14 +4,14 @@ import beans.Comment;
 
 import java.io.FileNotFoundException;
 
-public class CommentReader extends AbstractContentFileReader {
+public class CommentCsvFileReader extends AbstractContentScvFileReader {
     private static final String PATTERN = "";
 
-    public CommentReader(String filename, String delimiter) throws FileNotFoundException {
+    public CommentCsvFileReader(String filename, String delimiter) throws FileNotFoundException {
         super(filename, delimiter, PATTERN);
     }
 
-    public CommentReader(String filename) throws FileNotFoundException {
+    public CommentCsvFileReader(String filename) throws FileNotFoundException {
         super(filename, PATTERN);
     }
 

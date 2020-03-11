@@ -6,7 +6,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
 
-public abstract class AbstractContentFileReader {
+public abstract class AbstractContentScvFileReader {
     private final String delimiter;
     private final String FILENAME;//not caps
     private final String PATTERN;
@@ -40,14 +40,14 @@ public abstract class AbstractContentFileReader {
         return user;
     }
 
-    protected AbstractContentFileReader(String filename, String delimiter, String pattern) throws FileNotFoundException {
+    protected AbstractContentScvFileReader(String filename, String delimiter, String pattern) throws FileNotFoundException {
         this.delimiter = delimiter;
         this.FILENAME = filename;
         this.PATTERN = pattern;
         this.IN = new Scanner(new File(filename));
     }
 
-    protected AbstractContentFileReader(String filename, String pattern) throws FileNotFoundException {
+    protected AbstractContentScvFileReader(String filename, String pattern) throws FileNotFoundException {
         this(filename,Delimiters.SEPARATOR.toString(),pattern);
     }
 }
