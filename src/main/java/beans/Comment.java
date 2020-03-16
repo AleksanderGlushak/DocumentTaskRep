@@ -1,10 +1,13 @@
 package beans;
 
-import readers.Delimiters;
-
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import java.util.Objects;
-
+@Entity
+@Table(name = "comments")
 public class Comment extends Content implements Showable{
+    @Column
     private String text;
 
     public Comment(long id, User user, String title, String text) {

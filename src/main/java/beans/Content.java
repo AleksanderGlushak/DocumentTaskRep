@@ -1,14 +1,22 @@
 package beans;
 
 import org.codehaus.jackson.annotate.JsonProperty;
+import org.hibernate.annotations.ManyToAny;
 import readers.Delimiters;
 
+import javax.persistence.*;
 import java.util.Objects;
-
+@MappedSuperclass
 public abstract class Content {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     protected long id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
     @JsonProperty(value = "user")
     protected User user;
+    @Column
     protected String title;
 
     public long getId() {

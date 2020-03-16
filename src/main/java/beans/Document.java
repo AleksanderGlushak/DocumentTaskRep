@@ -5,17 +5,30 @@ import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.map.annotate.JsonDeserialize;
 
+import javax.persistence.*;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+@Entity
+@Table(name = "documents")
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Document {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
+    @Column
     private String name;
+    @Column
     private String text;
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "comment_id")
     private List<Comment> comments;
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "annotation_id")
     private List<Annotation> annotations;
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "attachment_id")
     private List<Attachment> attachments;
 
     public void addComment(Comment comment){

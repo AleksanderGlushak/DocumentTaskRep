@@ -2,11 +2,18 @@ package beans;
 
 import readers.Delimiters;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import java.util.Objects;
-
+@Entity
+@Table(name = "annotations  ")
 public class Annotation extends Content implements Showable{
+    @Column
     private long startPos;
+    @Column
     private long endPos;
+    @Column
     private String text;
 
     public Annotation(long id, User user, String title, long startPos, long endPos, String text) {

@@ -2,10 +2,16 @@ package beans;
 
 import readers.Delimiters;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import java.util.Objects;
-
+@Entity
+@Table(name = "attachments")
 public class Attachment extends Content implements Comparable<Attachment>, Downloadable{
+    @Column
     private String content;
+    @Column
     private long fileSize;
 
     public Attachment(long id, User user, String title, String content, long fileSize) {
