@@ -1,13 +1,8 @@
 import beans.*;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.hibernate.Hibernate;
-import utils.HibernateSessionFactoryUtil;
-import writers.ContentCsvFileWriter;
+import dao.database.UserDatabaseDAO;
 
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.util.*;
+import java.sql.SQLException;
 import java.util.logging.Logger;
 
 /*
@@ -48,8 +43,8 @@ public class Runner {
 
     private static Logger log = Logger.getLogger(String.valueOf(Runner.class));//logback
 
-    public static void main(String[] args) throws IOException {
-        HibernateSessionFactoryUtil.getSessionFactory();
+    public static void main(String[] args) throws IOException, SQLException {
+        new UserDatabaseDAO().addUser(new User(45557576,"Eugen Dladislavovich","Eugen@gmail.com"));
 //        User comUser = new User(343676,"Artemiy Vladimirovich","Artemiy@gmail.com");
 //        print(comUser);
 //        User attUser = new User(45557576,"Maxim Dladislavovich","Maxim@gmail.com");
