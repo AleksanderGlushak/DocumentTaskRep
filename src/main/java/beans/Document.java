@@ -1,34 +1,23 @@
 package beans;
 
-import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
-import org.codehaus.jackson.annotate.JsonProperty;
-import org.codehaus.jackson.map.annotate.JsonDeserialize;
 
 import javax.persistence.*;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 @Entity
 @Table(name = "documents")
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Document {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+public class Document extends Identity{
     @Column
     private String name;
     @Column
     private String text;
-    @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name = "comment_id")
+    @OneToMany(mappedBy = "document")
     private List<Comment> comments;
-    @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name = "annotation_id")
+    @OneToMany(mappedBy = "document")
     private List<Annotation> annotations;
-    @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name = "attachment_id")
+    @OneToMany(mappedBy = "document")
     private List<Attachment> attachments;
 
     public void addComment(Comment comment){
@@ -49,8 +38,7 @@ public class Document {
         addAttachment(attachment);
     }
 
-    public Document(long id, String name, String text, List<Comment> comments, List<Annotation> annotations, List<Attachment> attachments) {
-        this.id = id;
+    public Document(String name, String text, List<Comment> comments, List<Annotation> annotations, List<Attachment> attachments) {
         this.name = name;
         this.text = text;
         this.comments = comments;
@@ -58,8 +46,7 @@ public class Document {
         this.attachments = attachments;
     }
 
-    public Document(long id, String name, String text) {
-        this.id = id;
+    public Document(String name, String text) {
         this.name = name;
         this.text = text;
         this.comments = new ArrayList<Comment>();
@@ -113,14 +100,6 @@ public class Document {
                 attachments){
             this.attachments.add(c);
         }
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
     }
 
     public String getName() {

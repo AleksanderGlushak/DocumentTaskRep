@@ -15,7 +15,7 @@ public abstract class AbstractContentScvFileReader {
     public abstract Object readOne();
 
     public boolean hasNext(){
-        return IN.hasNext(PATTERN);
+        return IN.hasNext();
     } // abstract getPattern !!!
 
     protected long readLong(){

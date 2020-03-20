@@ -27,9 +27,4 @@ public class AttachmentCsvFileReader extends AbstractContentScvFileReader {
 
         return attachment;
     }
-
-    @Override
-    public boolean hasNext() {
-        return IN.hasNext("");
-    }
 }

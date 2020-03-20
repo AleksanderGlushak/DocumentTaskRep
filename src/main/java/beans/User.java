@@ -3,33 +3,32 @@ package beans;
 import readers.Delimiters;
 
 import javax.persistence.*;
+import java.util.LinkedList;
+import java.util.List;
 
 @Entity
 @Table(name = "users")
-public class User{
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+public class User extends Identity{
     @Column
     private String name;
     @Column
     private String email;
 
+    @OneToMany(mappedBy = "user")
+    private List<Annotation> annotations = new LinkedList<>();
+
+    @OneToMany(mappedBy = "user")
+    private List<Attachment> attachments = new LinkedList<>();
+
+    @OneToMany(mappedBy = "user")
+    private List<Comment> comments = new LinkedList<>();
+
     public User() {
     }
 
-    public User(long id, String name, String email) {
-        this.id = id;
+    public User(String name, String email) {
         this.name = name;
         this.email = email;
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
     }
 
     public String getName() {

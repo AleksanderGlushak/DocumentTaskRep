@@ -14,8 +14,8 @@ public class Attachment extends Content implements Comparable<Attachment>, Downl
     @Column
     private long fileSize;
 
-    public Attachment(long id, User user, String title, String content, long fileSize) {
-        super(id,user,title);
+    public Attachment(Document document, User user, String title, String content, long fileSize) {
+        super(document,user,title);
         this.content = content;
         this.fileSize = fileSize;
     }

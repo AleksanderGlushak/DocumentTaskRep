@@ -15,6 +15,30 @@ public class ContentCsvFileWriter {
     private final String filename;
     private final FileWriter fileWriter;
 
+    public void writeAnnotation(Annotation annotation) throws IOException {
+            fileWriter.write(BeansToWrite.ANNOTATION.toString().toLowerCase()
+                    + Delimiters.SEPARATOR
+                    + annotation.toString()
+                    + "\n");
+
+    }
+
+    public void writeAttachment(Attachment attachment) throws IOException {
+
+            fileWriter.write(BeansToWrite.ATTACHMENT.toString().toLowerCase()
+                    + Delimiters.SEPARATOR
+                    + attachment.toString()
+                    + "\n");
+
+    }
+
+    public void writeComment(Comment comment) throws IOException {
+            fileWriter.write(BeansToWrite.COMMENT.toString().toLowerCase()
+                    + Delimiters.SEPARATOR
+                    + comment.toString()
+                    + "\n");
+    }
+
     public void writeAnnotations(List<Annotation> annotations) throws IOException {
         for (Annotation a :
                 annotations) {

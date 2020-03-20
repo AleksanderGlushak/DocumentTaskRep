@@ -10,8 +10,8 @@ public class Comment extends Content implements Showable{
     @Column
     private String text;
 
-    public Comment(long id, User user, String title, String text) {
-        super(id,user,title);
+    public Comment(Document document, User user, String title, String text) {
+        super(document, user,title);
         this.text = text;
     }
 

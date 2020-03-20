@@ -7,7 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import java.util.Objects;
 @Entity
-@Table(name = "annotations  ")
+@Table(name = "annotations")
 public class Annotation extends Content implements Showable{
     @Column
     private long startPos;
@@ -16,8 +16,8 @@ public class Annotation extends Content implements Showable{
     @Column
     private String text;
 
-    public Annotation(long id, User user, String title, long startPos, long endPos, String text) {
-        super(id,user,title);
+    public Annotation(Document document, User user, String title, long startPos, long endPos, String text) {
+        super(document, user,title);
         this.startPos = startPos;
         this.endPos = endPos;
         this.text = text;

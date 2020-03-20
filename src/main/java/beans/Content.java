@@ -5,27 +5,21 @@ import org.hibernate.annotations.ManyToAny;
 import readers.Delimiters;
 
 import javax.persistence.*;
+import javax.print.Doc;
 import java.util.Objects;
 @MappedSuperclass
-public abstract class Content {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    protected long id;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
+public abstract class Content extends Identity {
+    @ManyToOne()
+    @JoinColumn(name = "user_id", nullable = false)
     @JsonProperty(value = "user")
     protected User user;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "document_id")
+    protected Document document;
+
     @Column
     protected String title;
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
 
     public User getUser() {
         return user;
@@ -43,8 +37,14 @@ public abstract class Content {
         this.title = title;
     }
 
-    public Content(long id, User user, String title) {
-        this.id = id;
+
+    public Content(Document document, User user, String title) {
+        this.document = document;
+        this.user = user;
+        this.title = title;
+    }
+
+    public Content(User user, String title) {
         this.user = user;
         this.title = title;
     }

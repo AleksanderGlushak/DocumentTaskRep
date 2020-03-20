@@ -26,9 +26,4 @@ public class CommentCsvFileReader extends AbstractContentScvFileReader {
 
         return comment;
     }
-
-    @Override
-    public boolean hasNext() {
-        return IN.hasNext("");
-    }
 }

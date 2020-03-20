@@ -29,9 +29,4 @@ public class AnnotationCsvFileReader extends AbstractContentScvFileReader {
 
         return annotation;
     }
-
-    @Override
-    public boolean hasNext() {
-        return IN.hasNext("");
-    }
 }
