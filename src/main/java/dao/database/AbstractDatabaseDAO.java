@@ -3,18 +3,53 @@ package dao.database;
 import beans.Identity;
 import beans.User;
 import dao.AbstractDAO;
-import org.hibernate.Session;
-import utils.HibernateSessionFactoryUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
-import javax.swing.*;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+import java.util.ArrayList;
 import java.util.List;
 
 public abstract class AbstractDatabaseDAO<T extends Identity> implements AbstractDAO<T> {
+    private Long currentId;
     private static EntityManager em = Persistence.createEntityManagerFactory("Exadel").createEntityManager();
     protected Class type;
+
+    @Override
+    public T readFirst() {
+        CriteriaBuilder builder = em.getCriteriaBuilder();
+        CriteriaQuery<Long> criteria = builder.createQuery( Long.class );
+        Root<T> personRoot = criteria.from( type );
+        criteria.select( builder.min(personRoot.<Long>get("id")));
+        this.currentId = em.createQuery( criteria ).getSingleResult();
+        if(currentId != null){
+            return getById(this.currentId);
+        } else
+            return null;
+    }
+
+    @Override
+    public T readNext() {
+        if(this.currentId == null){
+             return readFirst();
+        } else {
+            CriteriaBuilder builder = em.getCriteriaBuilder();
+            CriteriaQuery<Long> criteria = builder.createQuery( Long.class );
+            Root<T> personRoot = criteria.from( type );
+            criteria.select( builder.min(personRoot.<Long>get("id"))).where(builder.gt(personRoot.<Long>get("id"), this.currentId));
+            this.currentId = em.createQuery( criteria ).getSingleResult();
+        }
+        if (this.currentId != null)
+            return getById(this.currentId);
+        else
+            return null;
+    }
+
     @Override
     public T add(T t) {
         T ret = null;

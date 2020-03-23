@@ -1,203 +1,100 @@
 package utils;
 
-import org.apache.commons.dbcp.BasicDataSource;
-import org.apache.commons.dbcp.BasicDataSourceFactory;
-import org.hibernate.HibernateException;
-import org.hibernate.annotations.common.util.impl.LoggerFactory;
-import org.hibernate.cfg.Environment;
-import org.hibernate.engine.jdbc.connections.internal.ConnectionProviderInitiator;
-import org.hibernate.engine.jdbc.connections.spi.ConnectionProvider;
-import org.jboss.logging.Logger;
+import dao.database.AbstractDatabaseDAO;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Properties;
+import java.util.LinkedList;
+import java.util.PriorityQueue;
+import java.util.Queue;
+import java.util.Scanner;
 
-public class ConnectionPool implements ConnectionProvider {
+public class ConnectionPool {
+    private String url;
+    private String user;
+    private String password;
+    private int capacity;
+    private static final Queue<Connection> connections= new LinkedList<>();
+    private static Logger log = LoggerFactory.getLogger(AbstractDatabaseDAO.class);
 
-    private static final Logger log = LoggerFactory.logger(ConnectionPool.class);
-    private static final String PREFIX = "hibernate.dbcp.";
-    private BasicDataSource ds;
-
-    //Old Environment property for backward-compatibility (property removed in
-    //Hibernate3)
-    private static final String DBCP__PS__MAXACTIVE = "hibernate.dbcp.ps.maxActive";
-
-    //Property doesn't exists in Hibernate2
-    private static final String AUTOCOMMIT = "hibernate.connection.autocommit";
-
-    public void configure(Properties props) throws HibernateException {
-        try {
-            log.debug("Configure DBCPConnectionProvider");
-
-            //DBCP properties used to create the BasicDataSource
-            Properties dbcpProperties = new Properties();
-
-            //DriverClass & url
-            String jdbcDriverClass = props.getProperty(Environment.DRIVER);
-            String jdbcUrl = props.getProperty(Environment.URL);
-            dbcpProperties.put("driverClassName", jdbcDriverClass);
-            dbcpProperties.put("url", jdbcUrl);
-
-            //Username/password
-            String username = props.getProperty(Environment.USER);
-            String password = props.getProperty(Environment.PASS);
-            dbcpProperties.put("username", username);
-            dbcpProperties.put("password", password);
-
-            //Isolation level
-            String isolationLevel = props.getProperty(Environment.ISOLATION);
-            if ((isolationLevel != null)
-                    && (isolationLevel.trim().length() > 0)) {
-                dbcpProperties.put("defaultTransactionIsolation",
-                        isolationLevel);
+    private ConnectionPool() throws FileNotFoundException {
+        Scanner in = new Scanner(new File("src/resources/META-INF/jdbc.properties"));
+        String line = null;
+        while(in.hasNext()){
+            line = in.next();
+            switch (line.substring(0,line.indexOf("="))){
+                case "URL":
+                    this.url = line.substring(line.indexOf("=")+1);
+                    break;
+                case "USER":
+                    this.user = line.substring(line.indexOf("=")+1);
+                    break;
+                case "PASSWORD":
+                    this.password = line.substring(line.indexOf("=")+1);
+                    break;
+                case "POOL_CAPACITY":
+                    this.capacity = Integer.parseInt(line.substring(line.indexOf("=")+1));
+                    break;
+                default:
             }
-
-            //Turn off autocommit (unless autocommit property is set)
-            String autocommit = props.getProperty(AUTOCOMMIT);
-            if ((autocommit != null) && (autocommit.trim().length() > 0)) {
-                dbcpProperties.put("defaultAutoCommit", autocommit);
-            } else {
-                dbcpProperties.put("defaultAutoCommit",
-                        String.valueOf(Boolean.FALSE));
-            }
-
-            //Pool size
-            String poolSize = props.getProperty(Environment.POOL_SIZE);
-            if ((poolSize != null) && (poolSize.trim().length() > 0)
-                    && (Integer.parseInt(poolSize) > 0)) {
-                dbcpProperties.put("maxActive", poolSize);
-            }
-
-            //Copy all "driver" properties into "connectionProperties"
-            Properties driverProps = ConnectionProviderInitiator.getConnectionProperties(props);
-            if (driverProps.size() > 0) {
-                StringBuffer connectionProperties = new StringBuffer();
-                for (Iterator iter = driverProps.entrySet().iterator(); iter
-                        .hasNext();) {
-                    Map.Entry entry = (Map.Entry) iter.next();
-                    String key = (String) entry.getKey();
-                    String value = (String) entry.getValue();
-                    connectionProperties.append(key).append('=').append(value);
-                    if (iter.hasNext()) {
-                        connectionProperties.append(';');
-                    }
-                }
-                dbcpProperties.put("connectionProperties",
-                        connectionProperties.toString());
-            }
-
-            //Copy all DBCP properties removing the prefix
-            for (Iterator iter = props.entrySet().iterator(); iter.hasNext();) {
-                Map.Entry entry = (Map.Entry) iter.next();
-                String key = (String) entry.getKey();
-                if (key.startsWith(PREFIX)) {
-                    String property = key.substring(PREFIX.length());
-                    String value = (String) entry.getValue();
-                    dbcpProperties.put(property, value);
-                }
-            }
-
-            //Backward-compatibility
-            if (props.getProperty(DBCP__PS__MAXACTIVE) != null) {
-                dbcpProperties.put("poolPreparedStatements",
-                        String.valueOf(Boolean.TRUE));
-                dbcpProperties.put("maxOpenPreparedStatements",
-                        props.getProperty(DBCP__PS__MAXACTIVE));
-            }
-
-            //Some debug info
-            if (log.isDebugEnabled()) {
-                StringWriter sw = new StringWriter();
-                dbcpProperties.list(new PrintWriter(sw, true));
-                log.debug(sw.toString());
-            }
-
-            //Let the factory create the pool
-            ds = (BasicDataSource) BasicDataSourceFactory
-                    .createDataSource(dbcpProperties);
-
-            //The BasicDataSource has lazy initialization
-            //borrowing a connection will start the DataSource
-            //and make sure it is configured correctly.
-            Connection conn = ds.getConnection();
-            conn.close();
-
-            //Log pool statistics before continuing.
-            logStatistics();
-        } catch (Exception e) {
-            String message = "Could not create a DBCP pool";
-            log.error(message, e);
-            if (ds != null) {
-                try {
-                    ds.close();
-                } catch (Exception e2) {
-                    //ignore
-                }
-                ds = null;
-            }
-            throw new HibernateException(message, e);
         }
-        log.debug("Configure DBCPConnectionProvider complete");
+        for (int i = 0; i < capacity; i++) {
+            connections.add(createConnection());
+        }
+
     }
 
-    public Connection getConnection() throws SQLException {
-        Connection conn = null;
+    public Connection createConnection(){
         try {
-            conn = ds.getConnection();
-        } finally {
-            logStatistics();
+            return DriverManager.getConnection(url, user, password);
+        } catch (SQLException e) {
+            log.info("Error during connection creating");
+        }
+        return null;
+    }
+
+    private static ConnectionPool instance = null;
+
+    public static ConnectionPool getInstance() throws FileNotFoundException {
+        if (instance==null)
+            instance = new ConnectionPool();
+        return instance;
+    }
+
+    public void putBack(Connection conn){
+        if (connections.size()<=capacity){
+            connections.add(conn);
+        } else {
+            throw new IndexOutOfBoundsException();
+        }
+    }
+
+    public Connection getConnection(){
+        Connection conn = connections.poll();
+        if(conn == null)
+            try {
+                Thread.sleep(350);
+                conn = getConnection();
+            } catch (InterruptedException e) {
+                log.info("Error during thread sleeping");
         }
         return conn;
     }
 
-    public void closeConnection(Connection conn) throws SQLException {
-        try {
-            conn.close();
-        } finally {
-            logStatistics();
-        }
-    }
-
-    public void close() throws HibernateException {
-        log.debug("Close DBCPConnectionProvider");
-        logStatistics();
-        try {
-            if (ds != null) {
-                ds.close();
-                ds = null;
-            } else {
-                log.warn("Cannot close DBCP pool (not initialized)");
+    public static void close(){
+        Connection con = connections.poll();
+        while (con != null) {
+            try {
+                con.close();
+                con = connections.poll();
+            } catch (SQLException e) {
+                log.info("Error during connection closing");
             }
-        } catch (Exception e) {
-            throw new HibernateException("Could not close DBCP pool", e);
         }
-        log.debug("Close DBCPConnectionProvider complete");
-    }
-
-    protected void logStatistics() {
-        if (log.isInfoEnabled()) {
-            log.info("active: " + ds.getNumActive() + " (max: "
-                    + ds.getMaxActive() + ")   " + "idle: " + ds.getNumIdle()
-                    + "(max: " + ds.getMaxIdle() + ")");
-        }
-    }
-
-    public boolean supportsAggressiveRelease() {
-        return false;
-    }
-
-    @Override
-    public boolean isUnwrappableAs(Class aClass) {
-        return false;
-    }
-
-    @Override
-    public <T> T unwrap(Class<T> aClass) {
-        return null;
     }
 }

@@ -8,9 +8,11 @@ import java.util.Collection;
 import java.util.List;
 
 public interface AbstractDAO <T extends Identity> {
-    public T add(T t);
-    public T update(T t);
-    public T getById(Long id);
-    public List<T> getAll();
-    public void delete(T t);
+    T add(T t);
+    T update(T t);
+    T getById(Long id);
+    List<T> getAll();
+    void delete(T t);
+    T readNext();
+    T readFirst();
 }
