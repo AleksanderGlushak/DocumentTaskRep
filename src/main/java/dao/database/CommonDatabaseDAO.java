@@ -1,24 +1,23 @@
 package dao.database;
 
 import beans.Identity;
-import beans.User;
-import dao.AbstractDAO;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import dao.CommonDao;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Persistence;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import java.util.ArrayList;
 import java.util.List;
-
-public abstract class AbstractDatabaseDAO<T extends Identity> implements AbstractDAO<T> {
+//service layer, not connected DAOs(independent)
+public class CommonDatabaseDAO<T extends Identity> implements CommonDao<T> {
     private Long currentId;
-    private static EntityManager em = Persistence.createEntityManagerFactory("Exadel").createEntityManager();
-    protected Class type;
+    protected static final EntityManager em = Persistence.createEntityManagerFactory("Exadel").createEntityManager();
+    protected Class<T> type;
+
+    public CommonDatabaseDAO(Class<T> type) {
+        this.type = type;
+    }
 
     @Override
     public T readFirst() {
@@ -52,11 +51,10 @@ public abstract class AbstractDatabaseDAO<T extends Identity> implements Abstrac
 
     @Override
     public T add(T t) {
-        T ret = null;
         em.getTransaction().begin();
         em.persist(t);
         em.getTransaction().commit();
-        return ret;
+        return t;
     }
 
     @Override

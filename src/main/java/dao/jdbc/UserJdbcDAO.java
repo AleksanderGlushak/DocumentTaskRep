@@ -1,8 +1,8 @@
 package dao.jdbc;
 
 import beans.User;
-import dao.AbstractDAO;
-import dao.database.AbstractDatabaseDAO;
+import dao.CommonDao;
+import dao.database.CommonDatabaseDAO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import utils.ConnectionPool;
@@ -15,10 +15,10 @@ import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
 
-public class UserJdbcDAO implements AbstractDAO<User> {
+public class UserJdbcDAO implements CommonDao<User> {
 
     private final ConnectionPool connectionPool;
-    private static Logger log = LoggerFactory.getLogger(AbstractDatabaseDAO.class);
+    private static Logger log = LoggerFactory.getLogger(CommonDatabaseDAO.class);
 
     private static final String UPDATE_USER = "UPDATE users SET email = ?, name = ? WHERE id = ?";
     private static final String GET_ALL_USERS = "SELECT * FROM users";
@@ -130,7 +130,7 @@ public class UserJdbcDAO implements AbstractDAO<User> {
             st.setLong(1,user.getId());
             st.execute();
         } catch (SQLException e) {
-            log.info("Error during user delete");
+            log.error("Error during user delete");
         }
         connectionPool.putBack(c);
     }

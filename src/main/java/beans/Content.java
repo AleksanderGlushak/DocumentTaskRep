@@ -37,6 +37,13 @@ public abstract class Content extends Identity {
         this.title = title;
     }
 
+    public Document getDocument() {
+        return document;
+    }
+
+    public void setDocument(Document document) {
+        this.document = document;
+    }
 
     public Content(Document document, User user, String title) {
         this.document = document;

@@ -1,6 +1,6 @@
 package utils;
 
-import dao.database.AbstractDatabaseDAO;
+import dao.database.CommonDatabaseDAO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,8 +20,8 @@ public class ConnectionPool {
     private String password;
     private int capacity;
     private static final Queue<Connection> connections= new LinkedList<>();
-    private static Logger log = LoggerFactory.getLogger(AbstractDatabaseDAO.class);
-
+    private static Logger log = LoggerFactory.getLogger(CommonDatabaseDAO.class);
+    //Properties
     private ConnectionPool() throws FileNotFoundException {
         Scanner in = new Scanner(new File("src/resources/META-INF/jdbc.properties"));
         String line = null;
@@ -59,7 +59,7 @@ public class ConnectionPool {
     }
 
     private static ConnectionPool instance = null;
-
+    //sync
     public static ConnectionPool getInstance() throws FileNotFoundException {
         if (instance==null)
             instance = new ConnectionPool();
@@ -67,15 +67,16 @@ public class ConnectionPool {
     }
 
     public void putBack(Connection conn){
+
         if (connections.size()<=capacity){
             connections.add(conn);
         } else {
-            throw new IndexOutOfBoundsException();
+            throw new IndexOutOfBoundsException(); //another runtime exc (own exc)
         }
     }
 
     public Connection getConnection(){
-        Connection conn = connections.poll();
+        Connection conn = connections.poll();//restrict
         if(conn == null)
             try {
                 Thread.sleep(350);

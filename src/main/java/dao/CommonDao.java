@@ -7,8 +7,8 @@ import java.sql.SQLException;
 import java.util.Collection;
 import java.util.List;
 
-public interface AbstractDAO <T extends Identity> {
-    T add(T t);
+public interface CommonDao<T extends Identity> {
+    T add(T t) ;
     T update(T t);
     T getById(Long id);
     List<T> getAll();

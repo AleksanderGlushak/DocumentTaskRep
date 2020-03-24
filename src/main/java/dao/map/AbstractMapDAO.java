@@ -1,60 +1,68 @@
 package dao.map;
 
 import beans.Identity;
-import dao.AbstractDAO;
+import dao.CommonDao;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicLong;
 
-public abstract class AbstractMapDAO <T extends Identity> implements AbstractDAO<T> {
-    TreeMap<Long,T> map = new TreeMap<>();
-    private long id = 0;
-    private Long current_id;
-    private void incId(){
-        this.id++;
+public abstract class AbstractMapDAO <T extends Identity> implements CommonDao<T> {//not static
+    private static final Logger log = LoggerFactory.getLogger(AbstractMapDAO.class);
+    protected abstract TreeMap<Long,T> getMap();
+    private AtomicLong id = new AtomicLong();
+    private Long currentId;
+    private long incId(){
+        this.id.incrementAndGet();
+        return this.id.get();
     }
 
     @Override
     public T readFirst() {
-        if(this.map.isEmpty())
+        if(getMap().isEmpty())
             return null;
-        current_id = map.firstEntry().getKey();
-        return map.firstEntry().getValue();
+        currentId = getMap().firstEntry().getKey();
+        return getMap().firstEntry().getValue();
     }
 
     @Override
     public T readNext() {
-        if (this.current_id == null)
+        if (this.currentId == null)
             return readFirst();
-        this.current_id = map.higherKey(current_id);
-        if (this.current_id == null)
+        this.currentId = getMap().higherKey(currentId);
+        if (this.currentId == null)
             return null;
-        return this.map.get(this.current_id);
+        return getMap().get(this.currentId);
     }
 
     @Override
     public T add(T identity) {
-        map.put(id,identity);
+        log.info("Adding new entity of type {}, entity is {}", identity.getClass(), identity);
+        long id = incId();
+//        incId();
         identity.setId(id);
-        incId();
+        getMap().put(id,identity);
+        log.info("Entity of type {} successfully added, id is {}", identity.getClass(), id);
         return identity;
     }
 
     @Override
     public T update(T identity) {
-        map.put(identity.getId(),identity);
+        getMap().put(identity.getId(),identity);
         return identity;
     }
 
     @Override
     public T getById(Long id) {
-        return map.get(id);
+        return getMap().get(id);
     }
 
     @Override
     public List<T> getAll() {
         List<T> returns = new LinkedList<>();
         for (Map.Entry<Long, T> entry :
-                map.entrySet()) {
+                getMap().entrySet()) {
             returns.add(entry.getValue());
         }
         return returns;
@@ -62,6 +70,6 @@ public abstract class AbstractMapDAO <T extends Identity> implements AbstractDAO
 
     @Override
     public void delete(Identity identity) {
-        map.remove(identity.getId());
+        getMap().remove(identity.getId());
     }
 }

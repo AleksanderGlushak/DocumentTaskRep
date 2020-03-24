@@ -1,7 +1,7 @@
 package utils;
 
 import beans.*;
-import dao.database.AbstractDatabaseDAO;
+import dao.database.CommonDatabaseDAO;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 import org.slf4j.Logger;
@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 
 public class HibernateSessionFactoryUtil {
     private static SessionFactory sessionFactory;
-    private static Logger log = LoggerFactory.getLogger(AbstractDatabaseDAO.class);//logback
+    private static Logger log = LoggerFactory.getLogger(CommonDatabaseDAO.class);//logback
     private HibernateSessionFactoryUtil() {}
 
     public static SessionFactory getSessionFactory() {

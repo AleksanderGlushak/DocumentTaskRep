@@ -1,7 +1,8 @@
 import beans.*;
 
 
-import dao.AbstractDAO;
+import com.mysql.fabric.xmlrpc.Client;
+import dao.CommonDao;
 import dao.database.*;
 import dao.jdbc.UserJdbcDAO;
 import dao.map.*;
@@ -22,11 +23,13 @@ public class Runner {
     private static Logger log = LoggerFactory.getLogger(Runner.class);//logback
 
     public static void main(String[] args) throws IOException, SQLException {
-        AbstractDAO attachmentDAO = null;
-        AbstractDAO annotationDAO = null;
-        AbstractDAO commentDAO = null;
-        AbstractDAO documentDAO = null;
-        AbstractDAO userDAO = null;
+/*
+        ConnectionPool.getInstance();
+        CommonDao<Attachment> attachmentDAO = null;
+        CommonDao<Annotation> annotationDAO = null;
+        CommonDao<Comment> commentDAO = null;
+        CommonDao<Document> documentDAO = null;
+        CommonDao<User> userDAO = null;
 
         String choice;
         Scanner in = new Scanner(System.in);
@@ -38,11 +41,11 @@ public class Runner {
             documentDAO = new DocumentMapDAO();
             userDAO = new UserMapDAO();
         } else if(choice.equals("database")){
-            attachmentDAO = new AttachmentDatabaseDAO();
-            annotationDAO = new AnnotationDatabaseDAO();
-            commentDAO = new CommentDatabaseDAO();
-            documentDAO = new DocumentDatabaseDAO();
-            userDAO = new UserDatabaseDAO();
+            attachmentDAO = new CommonDatabaseDAO<>(Attachment.class);
+            annotationDAO = new CommonDatabaseDAO<>(Annotation.class);
+            commentDAO = new CommonDatabaseDAO(Comment.class);
+            documentDAO = new  CommonDatabaseDAO(Document.class);
+            userDAO = new CommonDatabaseDAO(User.class);
 
         } else {
             return;
@@ -88,10 +91,13 @@ public class Runner {
             u = (User) userDAO.readNext();
         }
 
-        if (choice.equals("database")) {
-            int n = 50;
+        print("Documents :");
+        print(documentDAO.getAll());
+*/
+        if (true) {
+            int n = 20;
 
-            AbstractDAO<User> poolDAO = new UserJdbcDAO();
+            CommonDao<User> poolDAO = new UserJdbcDAO();
             ExecutorService es = Executors.newFixedThreadPool(n);
 
             long start = System.currentTimeMillis();
@@ -118,5 +124,7 @@ public class Runner {
 
     private static void print(String text){
         log.info(text);
+
     }
+
 }
