@@ -10,37 +10,26 @@ import java.util.concurrent.atomic.AtomicLong;
 
 public abstract class AbstractMapDAO <T extends Identity> implements CommonDao<T> {//not static
     private static final Logger log = LoggerFactory.getLogger(AbstractMapDAO.class);
-    protected abstract TreeMap<Long,T> getMap();
     private AtomicLong id = new AtomicLong();
-    private Long currentId;
+    private TreeMap<Long,T> map;
+
+    AbstractMapDAO(TreeMap<Long, T> map){
+        this.map = map;
+    }
+
+    private TreeMap<Long,T> getMap(){
+        return this.map;
+    }
+
     private long incId(){
         this.id.incrementAndGet();
         return this.id.get();
     }
 
     @Override
-    public T readFirst() {
-        if(getMap().isEmpty())
-            return null;
-        currentId = getMap().firstEntry().getKey();
-        return getMap().firstEntry().getValue();
-    }
-
-    @Override
-    public T readNext() {
-        if (this.currentId == null)
-            return readFirst();
-        this.currentId = getMap().higherKey(currentId);
-        if (this.currentId == null)
-            return null;
-        return getMap().get(this.currentId);
-    }
-
-    @Override
     public T add(T identity) {
         log.info("Adding new entity of type {}, entity is {}", identity.getClass(), identity);
         long id = incId();
-//        incId();
         identity.setId(id);
         getMap().put(id,identity);
         log.info("Entity of type {} successfully added, id is {}", identity.getClass(), id);
@@ -49,27 +38,34 @@ public abstract class AbstractMapDAO <T extends Identity> implements CommonDao<T
 
     @Override
     public T update(T identity) {
+        log.info("Updating map entity of type {} with id = {}",identity.getClass(),identity.getId());
         getMap().put(identity.getId(),identity);
+        log.info("Updating map entity with id = {} successfully finished",identity.getId());
         return identity;
     }
 
     @Override
     public T getById(Long id) {
+        log.info("Getting map entity by id {}",id);
         return getMap().get(id);
     }
 
     @Override
     public List<T> getAll() {
+        log.info("Getting all map entities");
         List<T> returns = new LinkedList<>();
         for (Map.Entry<Long, T> entry :
                 getMap().entrySet()) {
             returns.add(entry.getValue());
         }
+        log.info("All map entities were successfully gotten");
         return returns;
     }
 
     @Override
     public void delete(Identity identity) {
+        log.info("Deleting map entity of type {}, entity {}",identity.getClass(),identity);
         getMap().remove(identity.getId());
+        log.info("Deleting map entity {} successfully finished",identity);
     }
 }

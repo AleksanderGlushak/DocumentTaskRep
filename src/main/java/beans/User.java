@@ -1,5 +1,6 @@
 package beans;
 
+import org.hibernate.annotations.Cascade;
 import readers.Delimiters;
 
 import javax.persistence.*;
@@ -15,12 +16,15 @@ public class User extends Identity{
     private String email;
 
     @OneToMany(mappedBy = "user")
+    @Cascade({org.hibernate.annotations.CascadeType.ALL})
     private List<Annotation> annotations = new LinkedList<>();
 
     @OneToMany(mappedBy = "user")
+    @Cascade({org.hibernate.annotations.CascadeType.ALL})
     private List<Attachment> attachments = new LinkedList<>();
 
     @OneToMany(mappedBy = "user")
+    @Cascade({org.hibernate.annotations.CascadeType.ALL})
     private List<Comment> comments = new LinkedList<>();
 
     public User() {

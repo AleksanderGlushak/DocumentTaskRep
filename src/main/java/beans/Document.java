@@ -1,6 +1,7 @@
 package beans;
 
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+import org.hibernate.annotations.Cascade;
 
 import javax.persistence.*;
 import java.text.SimpleDateFormat;
@@ -14,9 +15,12 @@ public class Document extends Identity{
     @Column
     private String text;
     @OneToMany(mappedBy = "document")
+    @Cascade({org.hibernate.annotations.CascadeType.ALL})
     private List<Comment> comments;
+    @Cascade({org.hibernate.annotations.CascadeType.ALL})
     @OneToMany(mappedBy = "document")
     private List<Annotation> annotations;
+    @Cascade({org.hibernate.annotations.CascadeType.ALL})
     @OneToMany(mappedBy = "document")
     private List<Attachment> attachments;
 

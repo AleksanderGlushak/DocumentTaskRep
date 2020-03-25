@@ -21,6 +21,8 @@ public abstract class Content extends Identity {
     @Column
     protected String title;
 
+
+
     public User getUser() {
         return user;
     }

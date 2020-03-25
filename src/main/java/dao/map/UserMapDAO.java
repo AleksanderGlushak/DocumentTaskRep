@@ -5,9 +5,7 @@ import beans.User;
 import java.util.TreeMap;
 
 public class UserMapDAO extends AbstractMapDAO<User>{
-    private static final TreeMap<Long, User> map = new TreeMap<>();
-    @Override
-    protected TreeMap<Long, User> getMap() {
-        return map;
+    public UserMapDAO(TreeMap<Long, User> map) {
+        super(map);
     }
 }
