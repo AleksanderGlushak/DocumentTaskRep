@@ -3,12 +3,16 @@ package services;
 import beans.Annotation;
 import beans.Attachment;
 import beans.Document;
+import dao.CommonDao;
 import dao.database.CommonDatabaseDAO;
+import dao.map.AttachmentMapDAO;
+import dao.map.DocumentMapDAO;
 
 import java.util.List;
+import java.util.TreeMap;
 
 public class AttachmentService extends AbstractService<Attachment> {
-    private CommonDatabaseDAO<Document> docDao;
+    private CommonDao<Document> docDao;
 
     public AttachmentService() {
         this.docDao = new CommonDatabaseDAO<>(Document.class);

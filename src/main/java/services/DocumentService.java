@@ -2,8 +2,10 @@ package services;
 
 import beans.*;
 import dao.database.CommonDatabaseDAO;
+import dao.map.DocumentMapDAO;
 
 import java.util.List;
+import java.util.TreeMap;
 
 public class DocumentService extends AbstractService<Document>{
     public DocumentService() {

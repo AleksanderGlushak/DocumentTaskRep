@@ -2,15 +2,19 @@ package services;
 
 import beans.Comment;
 import beans.Document;
+import dao.CommonDao;
 import dao.database.CommonDatabaseDAO;
+import dao.map.CommentMapDAO;
+import dao.map.DocumentMapDAO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
+import java.util.TreeMap;
 
 public class CommentService extends AbstractService<Comment> {
     private static final Logger log = LoggerFactory.getLogger(CommonDatabaseDAO.class);
-    private CommonDatabaseDAO<Document> docDao;
+    private CommonDao<Document> docDao;
 
     public CommentService() {
         this.docDao = new CommonDatabaseDAO<>(Document.class);

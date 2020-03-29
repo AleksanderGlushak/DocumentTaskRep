@@ -23,6 +23,7 @@ public class CommonDatabaseDAO<T extends Identity> implements CommonDao<T>, Iter
     private static final EntityManager em = Persistence.createEntityManagerFactory("Exadel").createEntityManager();
     private Class<T> type;
 
+
     public CommonDatabaseDAO(Class<T> type) {
         this.type = type;
     }

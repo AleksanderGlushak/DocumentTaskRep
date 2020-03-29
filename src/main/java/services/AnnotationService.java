@@ -2,12 +2,16 @@ package services;
 
 import beans.Annotation;
 import beans.Document;
+import dao.CommonDao;
 import dao.database.CommonDatabaseDAO;
+import dao.map.AnnotationMapDAO;
+import dao.map.DocumentMapDAO;
 
 import java.util.List;
+import java.util.TreeMap;
 
 public class AnnotationService extends AbstractService<Annotation> {
-    private CommonDatabaseDAO<Document> docDao;
+    private CommonDao<Document> docDao;
 
     public AnnotationService() {
         this.docDao = new CommonDatabaseDAO<>(Document.class);
