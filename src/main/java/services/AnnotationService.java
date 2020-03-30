@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.TreeMap;
 
 public class AnnotationService extends AbstractService<Annotation> {
+    // you must not have parent dao in child dao class.
+    //you should configure hibernate to remove it from Document when deleting Annotation
     private CommonDao<Document> docDao;
 
     public AnnotationService() {
@@ -19,6 +21,7 @@ public class AnnotationService extends AbstractService<Annotation> {
     }
 
 
+    // service methods should have logging
     @Override
     public void delete(Annotation annotation) {
         Document doc = docDao.getById(annotation.getDocument().getId());

@@ -23,6 +23,7 @@ public class AttachmentService extends AbstractService<Attachment> {
     @Override
     public void delete(Attachment attachment) {
         Document doc = docDao.getById(attachment.getDocument().getId());
+        // copy-paste
         doc.getAnnotations().remove(attachment);
         docDao.update(doc);
         super.delete(attachment);

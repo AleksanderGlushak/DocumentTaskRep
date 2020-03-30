@@ -11,6 +11,7 @@ import java.util.concurrent.atomic.AtomicLong;
 public abstract class AbstractMapDAO <T extends Identity> implements CommonDao<T> {//not static
     private static final Logger log = LoggerFactory.getLogger(AbstractMapDAO.class);
     private AtomicLong id = new AtomicLong();
+    // you should work using interfaces, not realizations
     private TreeMap<Long,T> map;
 
     AbstractMapDAO(TreeMap<Long, T> map){

@@ -29,6 +29,7 @@ public class ConnectionPool {
         log.info("Connection pool initializing");
         Properties properties = new Properties();
         try {
+            // bad path - won't work from executable JAR or WAR
             properties.load(new FileInputStream(new File("src/resources/META-INF/jdbc.properties")));
             this.url = properties.getProperty("URL");
             this.user = properties.getProperty("USER");
@@ -40,6 +41,7 @@ public class ConnectionPool {
         } catch (IOException e) {
             log.error("I/O exception during CP initialization");
         }
+        // is it success if previously you had IOException?
         log.info("Connection pool initialized successfully");
     }
 
@@ -47,6 +49,7 @@ public class ConnectionPool {
         try {
             return DriverManager.getConnection(url, user, password);
         } catch (SQLException e) {
+            // you should log down the exception details or throw it up
             log.error("Error during connection creating");
         }
         return null;
@@ -92,6 +95,7 @@ public class ConnectionPool {
 
     }
 
+    // method is not used
     public static void close(){
         Connection con = connections.poll();
         while (con != null) {

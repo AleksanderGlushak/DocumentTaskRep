@@ -4,6 +4,7 @@ import services.CommentService;
 import services.DocumentService;
 import services.UserService;
 
+// what is this tester for?
 public class Tester {
     public static void main(String[] args) {
         DocumentService ds = new DocumentService();

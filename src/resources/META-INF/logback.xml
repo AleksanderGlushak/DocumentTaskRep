@@ -1,3 +1,7 @@
+<!-- You've already have this config in root resources folder
+ It's not a good idea to put config files into Meta-inf folder. This folder should contain some meta-information
+ 'resources' folder must be inside `main` folder for WAR app
+ -->
 <configuration>
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>

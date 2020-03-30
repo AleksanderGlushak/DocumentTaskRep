@@ -10,8 +10,10 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Properties;
 
+// bad name of controller
 @WebServlet(name = "answer", value = "/answer")
 public class AnswerController extends HttpServlet {
+    // isnt used
     private static DocumentService ds;
     private static UserService us;
     private static AttachmentService ats;
@@ -20,6 +22,7 @@ public class AnswerController extends HttpServlet {
 
 
     @Override
+    // doesnt throw
     public void init() throws ServletException {
         ds = new DocumentService();
         us = new UserService();
