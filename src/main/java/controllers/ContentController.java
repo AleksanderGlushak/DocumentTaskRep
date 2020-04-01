@@ -30,6 +30,9 @@ public class ContentController extends HttpServlet {
         ans = new AnnotationService();
         cs = new CommentService();
 
+//    you dont have to initialize your data here!
+//        if you need some sample data in your service you should prepopulate it with some SQL-script
+
         Document document = new Document("First document", "Document text : coffee is very important thing in our lives");
         User user = new User("Artemiy Vladimirovich","Artemiy@gmail.com");
         document.addAnnotation(new Annotation(document,user,"First annotation title",5,12,"First annotation text"));
@@ -44,11 +47,12 @@ public class ContentController extends HttpServlet {
         ds.addUsersIfAbsent(document);
         ds.add(document);
 
-
+        // why do you call super() here?
         super.init();
     }
 
     @Override
+    // huge method
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         PrintWriter pw = resp.getWriter();
         pw.print("Print in URL " +
@@ -60,15 +64,19 @@ public class ContentController extends HttpServlet {
         Properties properties = new Properties();
         try {
             ServletContext sc = req.getServletContext();
+            // not
             properties.load(new FileInputStream(sc.getRealPath("/WEB-INF/permission.properties")));
         } catch (IOException e) {
             pw.print("Properties file was not found!");
         }
 
         try {
+            // not a good name for request parameter: there is existing content-type request header
             String contentType = req.getParameter("contentType");
             String operation = req.getParameter("operation");
+            // not necessary to get it from some explicit parameter - it can be got from request body
             String sId = req.getParameter("userId");
+            // can be NPE here
             if (properties.getProperty(sId).contains(contentType)) {
                 Document document = ds.getById((long) 1);
                 long id = Long.parseLong(sId);
@@ -80,6 +88,7 @@ public class ContentController extends HttpServlet {
                         Comment c;
                         String textC = req.getParameter("text");
                         c = new Comment(document, user, textC, title);
+                        // switch is duplicated
                         switch (operation) {
                             case "create":
                                 cs.add(c);
@@ -144,15 +153,19 @@ public class ContentController extends HttpServlet {
                 }
 
 
-            } else throw new RuntimeException("Access denied !");
+            } else
+//                for checking the permissions I'd rather use filter
+                throw new RuntimeException("Access denied !");
             resp.sendRedirect("/Exadel_Web_exploded/answer");
-        } catch (NullPointerException | NumberFormatException e){
+        } catch (
+//            It's a bad practice to catch these kind of exceptions
+            NullPointerException | NumberFormatException e){
             pw.print("Check entered parameters!");
         }
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-
+        // why is it empty?
     }
 }

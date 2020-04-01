@@ -31,6 +31,7 @@ public class CommonDatabaseDAO<T extends Identity> implements CommonDao<T>, Iter
 
     @Override
     public T add(T t) {
+//        You'd better have logging on service layer
         log.info("Adding new entity of type {}, entity is {}", t.getClass(), t);
         try{
             em.getTransaction().begin();
